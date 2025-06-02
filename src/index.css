@@ -1,13 +1,54 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: 'Marske';
+  src: url('./fonts/Marske.otf') format('opentype'),
+       url('./fonts/Marske.ttf') format('truetype');
+  font-weight: normal; /* Adjust if Marske has specific weights */
+  font-style: normal;  /* Adjust if Marske has specific styles like italic */
+}
+
+@font-face {
+  font-family: 'Voyager Grotesque';
+  src: url('./fonts/Voyager Grotesque Font/Voyager Grotesque(regular).ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Voyager Grotesque';
+  src: url('./fonts/Voyager Grotesque Font/V-GERB(bold).ttf') format('truetype');
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Voyager Grotesque';
+  src: url('./fonts/Voyager Grotesque Font/Veger(light).ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+}
+
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+  font-family: 'Marske', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: #111827; /* Default dark background from tailwind config */
+  color: #E5E7EB; /* A light gray for default text, adjust as needed */
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+@layer components {
+  .font-heading {
+    font-family: 'Voyager Grotesque', sans-serif;
+  }
 }
