@@ -1,13 +1,14 @@
 import { useState } from "react";
 import { useApp } from "../../contexts/AppContext";
-import { Transaction, Category } from "../../types";
+import { Transaction } from "../../types";
 import { TransactionList } from "../../components/Transactions/TransactionList";
 import { TransactionForm } from "../../components/Transactions/TransactionForm";
 import { RecurringTransactions } from "../../components/Transactions/RecurringTransactions";
 import { QuickAddButtons } from "../../components/Transactions/QuickAddButtons";
+import { Modal } from "../common/Modal";
 
 export const TransactionsPage: React.FC = () => {
-  const { transactions = [], categories = [], loading } = useApp();
+  const { transactions = [], categories = [], loading, addTransaction, updateTransaction } = useApp();
   const [showAddModal, setShowAddModal] = useState(false);
   const [showRecurringModal, setShowRecurringModal] = useState(false);
   const [filterType, setFilterType] = useState<"all" | "income" | "expense">(
@@ -28,7 +29,8 @@ export const TransactionsPage: React.FC = () => {
       transaction.description
         .toLowerCase()
         .includes(searchTerm.toLowerCase()) ||
-      transaction.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      categories.find(c => c.id === transaction.categoryId)?.name
+        .toLowerCase().includes(searchTerm.toLowerCase()) ||
       (transaction.tags &&
         transaction.tags.some((tag) =>
           tag.toLowerCase().includes(searchTerm.toLowerCase()),
@@ -36,10 +38,26 @@ export const TransactionsPage: React.FC = () => {
     return typeMatch && searchMatch;
   });
 
-  // const handleEditTransaction = (transaction: Transaction) => {
-  //   setTransactionToEdit(transaction);
-  //   setShowAddModal(true);
-  // };
+  const handleSubmitTransaction = async (data: Omit<Transaction, "id" | "coupleId" | "userId" | "user" | "isShared" | "createdAt" | "updatedAt">) => {
+    try {
+      if (transactionToEdit) {
+        await updateTransaction(transactionToEdit.id!, data);
+      } else {
+        await addTransaction(data, true, "danush");
+      }
+      setShowAddModal(false);
+      setTransactionToEdit(undefined);
+      setInitialCategoryForNew(undefined);
+    } catch (error) {
+      console.error("Error saving transaction:", error);
+    }
+  };
+
+  const handleCancelTransaction = () => {
+    setShowAddModal(false);
+    setTransactionToEdit(undefined);
+    setInitialCategoryForNew(undefined);
+  };
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -175,17 +193,19 @@ export const TransactionsPage: React.FC = () => {
       )}
 
       {/* Add Transaction Modal */}
-      {showAddModal && (
+      <Modal
+        isOpen={showAddModal}
+        onClose={handleCancelTransaction}
+        title={transactionToEdit ? "Edit Transaction" : "Add Transaction"}
+      >
         <TransactionForm
           transaction={transactionToEdit}
           initialCategoryName={initialCategoryForNew}
-          onClose={() => {
-            setShowAddModal(false);
-            setTransactionToEdit(undefined);
-            setInitialCategoryForNew(undefined);
-          }}
+          onSubmit={handleSubmitTransaction}
+          onCancel={handleCancelTransaction}
+          onClose={handleCancelTransaction}
         />
-      )}
+      </Modal>
 
       {/* Recurring Transactions Modal */}
       {showRecurringModal && (

@@ -33,7 +33,7 @@ export const VoiceInputModal: React.FC<VoiceInputModalProps> = ({
     }
 
     // Create speech recognition instance
-    // @ts-expect-error // Changed from @ts-ignore
+    // @ts-ignore
     window.SpeechRecognition =
       window.SpeechRecognition || window.webkitSpeechRecognition;
     if (window.SpeechRecognition) {

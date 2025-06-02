@@ -8,7 +8,7 @@ import {
 } from "../../utils/helpers";
 import { Modal } from "../common/Modal";
 import { TransactionForm } from "./TransactionForm";
-import { useTransactions } from "../../hooks/useTransactions";
+import { useApp } from "../../contexts/AppContext";
 
 interface TransactionListProps {
   title?: string;
@@ -23,8 +23,7 @@ export const TransactionList: React.FC<TransactionListProps> = ({
   transactions,
   categories,
 }) => {
-  const { addTransaction, updateTransaction, deleteTransaction } =
-    useTransactions();
+  const { addTransaction, updateTransaction, deleteTransaction } = useApp();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -35,14 +34,15 @@ export const TransactionList: React.FC<TransactionListProps> = ({
     null,
   );
 
-  const handleAddEdit = async (data: Omit<Transaction, "id">) => {
+  const handleAddEdit = async (data: Omit<Transaction, "id" | "coupleId" | "userId" | "user" | "isShared" | "createdAt" | "updatedAt">) => {
     setIsLoading(true);
 
     try {
       if (selectedTransaction) {
         await updateTransaction(selectedTransaction.id!, data);
       } else {
-        await addTransaction(data);
+        // For new transactions, we need to provide the required parameters
+        await addTransaction(data, true, "danush"); // Default to shared transaction by Danush
       }
       setIsModalOpen(false);
     } catch (error) {

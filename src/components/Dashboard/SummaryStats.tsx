@@ -1,15 +1,20 @@
 import { Card } from "../common/Card";
 import { formatCurrency } from "../../utils/helpers";
-import { useTransactions } from "../../hooks/useTransactions";
+import { useApp } from "../../contexts/AppContext";
 
 export const SummaryStats: React.FC = () => {
-  const { stats, currentPartner, getCurrentPartnerStats } = useTransactions();
+  const { transactions } = useApp();
 
-  // Use partner-specific stats if available, otherwise fall back to overall stats
-  const partnerStats = getCurrentPartnerStats
-    ? getCurrentPartnerStats()
-    : stats;
-  const { totalIncome, totalExpenses, balance } = partnerStats;
+  // Calculate stats from transactions
+  const totalIncome = transactions
+    .filter(t => t.type === 'income')
+    .reduce((sum, t) => sum + t.amount, 0);
+  
+  const totalExpenses = transactions
+    .filter(t => t.type === 'expense')
+    .reduce((sum, t) => sum + t.amount, 0);
+  
+  const balance = totalIncome - totalExpenses;
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
@@ -19,7 +24,7 @@ export const SummaryStats: React.FC = () => {
       >
         <div className="text-center">
           <p className="text-xs text-green-400 uppercase tracking-wider font-semibold">
-            {currentPartner}'s Income
+            Total Income
           </p>
           <p className="text-3xl font-bold text-green-300 mt-1.5">
             {formatCurrency(totalIncome)}
@@ -33,7 +38,7 @@ export const SummaryStats: React.FC = () => {
       >
         <div className="text-center">
           <p className="text-xs text-red-400 uppercase tracking-wider font-semibold">
-            {currentPartner}'s Expenses
+            Total Expenses
           </p>
           <p className="text-3xl font-bold text-red-300 mt-1.5">
             {formatCurrency(totalExpenses)}
@@ -55,7 +60,7 @@ export const SummaryStats: React.FC = () => {
               balance >= 0 ? "text-blue-400" : "text-yellow-400"
             }`}
           >
-            {currentPartner}'s Balance
+            Balance
           </p>
           <p
             className={`text-3xl font-bold mt-1.5 ${
