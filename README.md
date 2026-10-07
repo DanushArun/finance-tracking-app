@@ -1,46 +1,59 @@
-# Getting Started with Create React App
+# Finance Tracking App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A React / TypeScript personal-finance interface with Firebase-backed authentication and
+collections for transactions, categories, budgets and goals.
+The current build uses Vite; the previous Create React App starter README did not match it.
 
-## Available Scripts
+## Product flow
 
-In the project directory, you can run:
+Authenticate, record transactions, inspect dashboard summaries, set budgets and goals,
+and review reports. Additional UI includes recurring transactions, receipt scanning,
+voice input, settings and couple-sharing services.
 
-### `npm start`
+Receipt analysis and category suggestions in `geminiService.ts` currently return mock data.
+They do not constitute a completed Gemini receipt extraction integration.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## Local setup
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+```bash
+git clone https://github.com/DanushArun/finance-tracking-app.git
+cd finance-tracking-app
+npm ci
+npm run dev
+```
 
-### `npm test`
+Configure your own Firebase project through these Vite environment variables:
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```text
+VITE_FIREBASE_API_KEY
+VITE_FIREBASE_AUTH_DOMAIN
+VITE_FIREBASE_PROJECT_ID
+VITE_FIREBASE_STORAGE_BUCKET
+VITE_FIREBASE_MESSAGING_SENDER_ID
+VITE_FIREBASE_APP_ID
+```
 
-### `npm run build`
+Enable the Firebase services required by the app and configure authorization rules in your
+own project. No backend access policy is proven merely by hiding a route in the React UI.
+The mock AI service still references `process.env.REACT_APP_GEMINI_API_KEY`, a legacy convention
+that needs reconciliation with Vite before claiming that integration works.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Source map
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+- [App.tsx](src/App.tsx): authenticated routing.
+- [firebaseService.ts](src/services/firebaseService.ts): auth and data services.
+- [geminiService.ts](src/services/geminiService.ts): mocked receipt/category behavior.
+- [components](src/components): dashboard, transaction, budget, goal and report UI.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Verification
 
-### `npm run eject`
+```bash
+npm run lint
+npm run build
+npm run preview
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+Source, route structure and package scripts were inspected. The manifest has no test script.
+No Firebase write, receipt-provider call or end-to-end finance workflow was executed for this
+README update. Financial summaries depend on entered data and implemented calculations;
+this repository does not demonstrate bank synchronization or audited accounting results.
